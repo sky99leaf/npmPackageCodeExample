@@ -1,0 +1,16 @@
+{
+    "name": "pkg-test-a",
+    "version": "4.2.115",
+    "description": "DEPENDENCIES REMOVED USING PEERDEPENDENCIES FOR REACT COMPONENT IN BUNDLES",
+    "main": "bundle.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "peerDependencies": {
+        "qrcode": "^1.5.3",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    }
+}

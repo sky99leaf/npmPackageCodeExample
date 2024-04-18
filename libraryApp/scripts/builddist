@@ -1,0 +1,75 @@
+#!/bin/bash 
+# written/tested on windows using git-bash shell
+# echo -e 'If U see error message: "node_modules/.bin/babel: No such file or directory"'
+# echo '   it means node_modules doesnt exist and/or babel is not installed. '
+# echo '   run "npm install" in code sub-folder to set it up.'
+echo '### THIS SCRIPT REQUIRES NODE_MODULES TO BE IN CODE FOLDER ACCORDING ###'
+echo '### THE CODE FOLDER'S PACKAGE.JSON \[npm install\]                   ###'
+echo '### Node.js command line utils get run in this script. They are      ###'
+echo '### called with NODE_PATH pointing to node_modules in code folder    ###'
+echo
+rm -rf npmdist # expendable folder gets rebuilt
+mkdir npmdist npmdist/helpercss  # makes two folders at once
+### RUN BABEL, COMBINES .JS FILES INTO FILE \"all.js\". File \"babel.config.json\" controls it.
+### NODE_ENV=production; # NODE_ENV=development; #this tests ok
+### buildCmd="node_modules/.bin/babel src/Helper*.js src/DoQRCode.js --no-comments --out-file npmdist/all.js"
+### buildCmd="node node_modules/webpack/bin/webpack build"
+RESET='\e[0m';REDBOLD='\e[1;31m'; # echo -e $REDBOLD hello $RESET today # $(tput sgr ... works on some terminals and not others...
+
+# SAVE function functionSayHi() { echo 'hi'; echo 'arg' $1; return 123; }; functionSayHi 'apple'; echo $?; exit;
+
+# function cd's to folder but exits if not successful ie wrong or nonexistent folder
+function functionChdir() { 
+    cd $1; currdir=$(basename $(PWD) ) # $(foo) runs foo & returns result. basename gets last dir.
+    if [ $currdir != $1 ]; then echo ERROR: WRONG FOLDER. exiting.; exit; fi; 
+}; 
+# cd to code and build the bundle with webpack and babel
+functionChdir code
+# webpack.config_build has: path: path.resolve(__dirname, '../dist-webpack')
+buildCmd="node node_modules/webpack/bin/webpack build -c ./webpack.config_build.js"
+echo -e 'now running this: \n   ' $buildCmd
+$buildCmd
+cd ..
+echo -e $REDBOLD ' at this point dist-webpack should have the new bundle.\* files' $RESET
+# cp index.html.dist/index.html dist-webpack  # so npm webpack serve will work
+cp dist-webpack/bundle.* npmdist/
+# include css in npmdist but keep it separate. Get from src because it changes.
+cp code/src/helpercss/helper.css npmdist/helpercss
+
+# this block increments version number in package.json of the export
+functionChdir copyToNpmdist
+# queryJSON.js requires these packages:     npm i jsonpath; npm i yargs;
+echo before `pwd`
+# [added NODE_PATH to ->] oldPkgversion=$(node ../queryJSON.js --file=package.json --queryStr='$..version')
+oldPkgversion=$(NODE_PATH='../code/node_modules' node ../scripts/queryJSON.js --file=package.json --queryStr='$..version' )
+# echo BELOW COMMAND UPDATES VERSION NUMBER IN [non overwritten file] PACKAGE.JSON. 
+npm version patch > /dev/null;    # modifies package.json. Other variations: npm [minor|major] patch 
+cd ..  # back to main folder
+# done updating version block
+
+cp -r copyToNpmdist/* npmdist  # copy package.json, jpeg's, readme etc dot dist
+# folder npmdist now has stuff to publish to npmjs.com.
+echo listing of npmdist:
+ls npmdist
+# call a javascript utility to get tag values from package.json
+# run "node queryJSON.js" to see it's help mode.
+pkgversion=$(NODE_PATH='./code/node_modules' node scripts/queryJSON.js --file=npmdist/package.json --queryStr='$..version')
+pkgname=$(NODE_PATH='./code/node_modules' node scripts/queryJSON.js --file=npmdist/package.json --queryStr='$..name')
+echo -e '\nPACKAGE: '$REDBOLD$pkgname$RESET', VERSION: '$REDBOLD$pkgversion$RESET ' (formerly ' $oldPkgversion')'
+echo -e '    IS NOW IN FOLDER' $REDBOLD ' npmdist ' $RESET 'READY TO PUBLISH TO NPMJS'
+
+echo -e 'NOW PUBLISH TO NPMJS USING SCRIPT' $REDBOLD'publishToNpm'$RESET 
+echo -e '    OR COMMAND' $REDBOLD'npm publish [onetimepasswd]'$RESET
+echo -e 'AND ON CLIENT, RUN' $REDBOLD 'npm i' $pkgname $RESET 'to eat the change and update version.'
+echo 'node node_modules/webpack/bin/webpack serve'
+# set -x # sets echo ON  # set +x # sets echo OFF 
+
+# echo \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\
+# \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?
+# echo \?\?\?\? DID YOU UPDATE THE VERSION NUMBER IN PACKAGE.JSON \?\?\?\?
+# echo \?\?\?\?' IN FILE copyToNpmdist/package.json    '\?\?\?\?
+# echo \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\
+# \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?
+
+####set -x # sets echo ON       set +x # sets echo OFF
+

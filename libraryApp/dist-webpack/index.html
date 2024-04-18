@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React with Webpack</title>
+</head>
+<body style="font-size: 22px;">
+<style> h3, ul{margin-bottom: -0.5em} </style><!-- reduce big space under h3 or ul -->
+  <br/><h3><u>This is index.html in dist-webpack</u>
+  <br/>Run with either:</h3>
+  <ul>
+  <li><code>node_modules/webpack/bin/webpack serve -c ./webpack.config_devServer.js</code> 
+      and browse to localhost:3000
+  </li>
+  <li><code>node_modules/webpack/bin/webpack build -c ./webpack.config_devServer.js</code> <br/>
+      to build dev bundle <code>dist-webpack/bundle_localdev.js</code> without running server, then directly clicking dist-webpack/index.html</li>
+</ul>
+<h3>How this page gets javascript and React.js from the bundle</h3><ul>
+  <li>This html page has <code>&lt;script src="./bundle_localdev.js"</code>...</li>
+  <li>Files in the bundle get visible from DOM object <code> window.MyLibrary</code>.</li>
+  <li>A subsequent script tag calls
+     <code>putStuffToCodeInDiv()</code> from the bundle.</li>
+  <li>This function does <code>document.getElementById('divThatGetsReactContent')</code> that's 
+  in this html file<br/>and renders a React functional component into it. That component should
+have components to be coded and tested so you can see the results here</li>
+  <li>when you run index.html without a server, it shows that everything is in plain javascript, 
+    including React.js functionality.<br/>That's because <b>babel</b> "transpiled" the JSX in
+    source code to plain javascript, gave it to <b>webpack</b> which included it in <b>bundle_localdev.js</b>
+  </li>
+  <li>file <b>webpack.config_devServer.js</b> runs the show in this process</li>
+</ul>
+<h3>Below is the div that gets loaded:</h3><br/>
+<div id="divThatGetsReactContent" style="border:1px solid black;"></div>
+<!-- note that plain non-jsx is present here because this file is plain HTML -->
+<script src="./bundle_localdev.js" type="text/javascript"></script>
+  
+  <script>
+    // this puts React.js etc content into this div
+    window.MyLibrary.putStuffToCodeInDiv(); 
+    console.log('index.html inside dist-webpack')
+  </script>
+</body>
+</html>

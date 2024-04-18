@@ -1,0 +1,138 @@
+
+# for project npmPackageCodeExample
+# run this script as "source addHistory" so history gets added to current shell
+# This uses associative arrays in bash. I use separate variables to hold array operations
+# such as getting length or keys because these operations appear confusing to a modern coder.
+
+# EXAMPLE .bashrc SNIPPET FOR USING WITH THIS UTILITY:
+# alias hhh='source Scripts/addHistory'
+
+declare -A listing;  # -A makes listing an associative array ie: listing[x], listing[y]
+
+    listing[e]='
+# ps -ef|grep com.example.springboot.Application| grep -v grep 
+# bbb=$(ps -ef|grep com.example.springboot.Application| grep -v grep | awk SINGLEQUOT{print $2 }SINGLEQUOT) 
+# kill -9 $bbb  
+find . -cmin -30 -type f -exec ls -l {} \;|grep -v .git
+find . -name 'Docke*' -exec grep "abcd" {} \; -print
+find . -not -path "*/node_modules/*" -type f -name "*.js" -exec grep "isRunn" {} \; -print
+find . -path '*mysql*' -prune -o -type f -size -10k -exec grep "ndRefrs" {} \; -print
+find . -type f -exec grep "ndRefrs" {} \; -print
+find . -type f -size +2M -exec ls -l {} \; -print
+find . -not -path "*/node_modules/*" -not -path "*/.git/*" -type f -size +1M -exec ls -l {} \; 
+echo ##### this finds node_modules folders which are very big ######
+find . -name node_modules -type d -prune -print
+echo X is single quote below..  
+kill $(ps -ef|grep com.example.springboot.Application| grep -v grep | awk X{print $2 }X )
+# -r means recursive,  -x means exclude, these excludes keep empty folder but not contents
+zip -r /remote/feb7.zip full-stack-docr -x *.git* */node_modules/**\* */spboot/build/**\* */mySqlWorkDir/**\*
+foo=http://$(hostname -I | sed "s/ *$//g"):3000; google-chrome $foo;
+echo "tasklist|grep node, taskkill //PID 5632 //F"
+arp -a |grep dyna
+'
+    listing[f]='
+echo ###### config persists across logins. Probably adds to .git #####
+git config --global user.name "myname"
+git config --global user.email "myemail@xyz.com"
+echo ###### if local got modified before git pull and git refuses
+echo to commit/push. First backup local, then run "git stash" which
+echo DELETES LOCAL CHANGES and restores to last git pull.
+echo Then see other "git stash" commands to retrieve stashed code.
+echo ############################################
+git log -p -1  # show commit history
+git branch -v  # shows local branch
+git remote -v  # show github repo url
+'
+
+echo Adds entry to shell history
+echo enter e for unix find, zip, ssh, etc and some windows commands
+echo enter f for git commands
+
+read userInputA
+if [ -z $userInputA  ] # -z tests if empty. If try to == '', get error if empty
+then 
+  userInputA='none'
+fi
+
+# ${listing[$userInputA]} has spaces so enclose in quotes if [] doesnt thing mulitple arguments
+if [ -z "${listing[$userInputA]}" ]; then # -z tests if empty. 
+	echo not a valid choice : $userInputA
+	# no good when used with "source thisfile" ..exit
+else
+	ct=0
+	unset choices; # when run as "source thisScript", must ERASE arrays or else they perist between calls.
+	declare -A choices;  # this makes listing an associative array ie: listing[x], listing[y]
+	charCt=97 # letter 'a'
+	skipd=0
+
+	if [ $userInputA != 'none' ] 
+	then
+		# echo $listing|sed 's/\ /\n/g' # substitute \n newline for space
+		# lines=$(echo -e $listing|sed 's/\ /\n/g') # substitute \n newline for space
+		IFS=$'\n'   #Set the field separator to new line
+		# iterate list chosen by user
+		# for item in ${listing[$userInputA]}  # use curly bracket for associative array
+		chosenListingBlock=${listing[$userInputA]}
+		# present user with list of choices of command-line blocks to choose from
+		for item in ${chosenListingBlock}
+		do
+		    # exclude all lines starting with #
+			if [ ${item::1} != '#' ]   # this grabs first character out of string $item
+			then 
+				asciiCharCode=$charCt; # echo $asciiCharCode;
+				if [ $asciiCharCode -gt 122 ]
+					then 
+					asciiCharCode=$(($asciiCharCode - 58)) # starts alpabet at uppercase
+					# echo zzz $asciiCharCode
+					fi;
+				charCtAsCharacter=$(printf \\$(printf "%o" $asciiCharCode))  # bizzare but it works. converts int to ascii character
+				choices[$charCtAsCharacter]=$item; # build associative array where char is key and value is command
+				# history -s $item; fi;
+				echo $charCtAsCharacter\) $item;  # show a)date ... b)pwd ... etc
+				ct=$((ct+1));  charCt=$((charCt+1));
+				# prints d as number...     echo yyy $(printf '%d' "'a")
+			else
+				skipd=$((skipd+1));
+			fi 
+		done
+		
+		# IF USING OR || OR AND && USE DOUBLE BRACKETS!  [[    ]]  
+		read userInputB
+		# -z checks if variable exists returns boolean
+		if [ -z $userInputB  ]; then userInputB='none'; fi; # make exists so if stmt wont crash
+		revOrder=() # setup array to flip lines to reverse order
+		ct=0;
+		# choicesKeys=() # declare 1-d array
+		# choicesKeys=("${!choices[@]}") # fancy way bash gets array of keys for associative array
+		# choicesKeysCount=${#choicesKeys[@]} # fancy way bash gets length of simple array
+		# echo choices keys[8]: ${choicesKeys[8]}, choices keys count: $choicesKeysCount
+		
+		if [[ $userInputB != 'none' ]]; then 
+		# iterate each character in $userInputB
+		for (( oneCharPtr=0; oneCharPtr<${#userInputB}; oneCharPtr++ )); do
+			item=${userInputB:$oneCharPtr:1}  # get char at position indicated by oneCharPtr
+			#echo adding ${choices[$item]}
+			history -s ${choices[$item]}
+		done
+		fi
+		# echo $ct items added to history, $skipd skipped\(#\)
+	else
+			echo exiting
+	fi
+fi
+
+# TO KILL A UNIX PROCESS BY NAME
+# # ps -ef|grep com.example.springboot.Application| grep -v grep 
+# processIdToKill=$(ps -ef|grep com.example.springboot.Application| grep -v grep | awk '{print $2 }') 
+# #     ^^^^^^ unix command to get all processes on system. returns many lines
+# #            ^^^^ extract the line with this string
+# #                                                                    ^^^ grab second word on the line
+# echo killing process: $processIdToKill
+# kill -9 $processIdToKill  
+# processIdToKill=$(ps -ef|grep react| grep -v grep | awk '{print $2 }') 
+# echo killing process: $processIdToKill
+# kill -9 $processIdToKill  
+
+
+
+

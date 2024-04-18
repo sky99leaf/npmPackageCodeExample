@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# for file in $(ls *.jpg); do
+for file in $(find . -type f -path "*.jpg" ! -name "mod_*" -exec basename {} \;); do
+#                                          ^^^^^^^^^^^^^^^ exclude 'mod'
+#                                     get rid of ''./'' before ^^^^^^^^^^^^^^^^^^^^
+    echo $file 
+    NODE_PATH='../libraryApp/code/node_modules' node runSharpJS.js --imgFile $file 
+done
+exit
+
+# NODE_PATH needs to have "dependencies": {"sharp": "^0.33.3"} in its package.json
+# NODE_PATH='../libraryApp/code/node_modules' node runSharpJS.js --imgFile 'Mona_Lisa204k.jpg' 

@@ -1,0 +1,40 @@
+{
+  "name": "react-web-pak-babel",
+  "version": "1.0.0",
+  "description": "This file NOT to be published! Its for BOTH code under development AND running webpack and babel",
+  "main": "file-not-there.js",
+  "scripts": {
+    "DO_THIS":"READ DESCRIPTION NOW!",
+
+    "//start": "runs http (serve)r which webpack provides for auto-update development. No bundle.js built!",
+    "start": "node node_modules/webpack/bin/webpack serve -c ./webpack.config_devServer.js",
+
+    "//": "run below as: npm run-script buildBundle_outLibWindowType",
+    "//buildBundleServe": "builds bundle_serve.js in dist_webpack for development. For running index.html directly",
+    "buildBundle_outLibWindowType": "node node_modules/webpack/bin/webpack build -c ./webpack.config_devServer.js && echo run dist_webpack/index.html directly",
+
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "css-loader": "^6.10.0",
+    "fs": "^0.0.1-security",
+    "jsonpath": "^1.1.1",
+    "qrcode": "^1.5.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sharp": "^0.33.3",
+    "style-loader": "^3.3.4",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
+    "babel-loader": "^9.1.3",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.2"
+  }
+}

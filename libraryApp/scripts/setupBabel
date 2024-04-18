@@ -1,0 +1,12 @@
+
+#  The source files are jsx and cannot be directly exported. You need to use
+# babel to compile them into normal javascript. 
+# install babel inside library project:
+npm install --save-dev @babel/core @babel/cli @babel/preset-env 
+npm install -save @babel/polyfill
+# ref: https://babeljs.io/docs/babel-preset-minify
+# install minify:
+npm install babel-preset-minify --save-dev
+# the 'minify' tag in config file controlls this plugin.
+# to control babel, edit babel.config.json:
+#  ( @babel/preset-react allows Babel to compile JSX.  )

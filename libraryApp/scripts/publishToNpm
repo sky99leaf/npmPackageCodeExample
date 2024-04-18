@@ -1,0 +1,53 @@
+#!/bin/bash 
+# written/tested on windows using git-bash shell
+#-v
+#  -v. Print shell input lines as they’re read.
+# function cd's to folder but exits if not successful ie wrong or nonexistent folder
+function functionChdir() { 
+    cd $1; currdir=$(basename $(PWD) ) # $(foo) runs foo & returns result. basename gets last dir.
+    if [ $currdir != $1 ]; then echo ERROR: WRONG FOLDER. exiting.; exit; fi; 
+}; 
+
+oneTimeNpmjsPassword=$1
+if [ -z $oneTimeNpmjsPassword ]; then
+   echo One Time Password for npmjs.com required. exiting.
+   exit
+fi  
+
+functionChdir npmdist
+
+ls -lt
+echo end of listing
+
+if [ 1 == 234 ]; then
+   echo enter y to continue or anything else to exit; read userInputA
+   if [ -z $userInputA ] || [ $userInputA != 'y' ] ; then echo exiting; exit; fi
+   echo continuing to publish to npmjs
+fi
+
+# publish using "one time password" from the google authenticator phone app
+# which was setup using instructions on npmjs.com
+# publishes to npmjs.com. Its name on npmjs.com is what's in the package.json
+# "name" field
+echo Now publishing using One Time Key $oneTimeNpmjsPassword
+npm publish --otp $oneTimeNpmjsPassword
+# to unpublish (in webpage click on version to get it spec):
+# npm unpublish pkg-test-a@1.0.2 --otp 12345
+cd ..
+echo '########################### now in folder' $(pwd)
+RESET='\e[0m';REDBOLD='\e[1;31m';
+# queryJSON.js requires these packages:     npm i jsonpath; npm i yargs;
+pkgversion=$(NODE_PATH='code/node_modules' node scripts/queryJSON.js --file=npmdist/package.json --queryStr='$..version')
+pkgname=$(NODE_PATH='code/node_modules' node scripts/queryJSON.js --file=npmdist/package.json --queryStr='$..name')
+echo -e 'PACKAGE: '$REDBOLD$pkgname$RESET', VERSION: '$REDBOLD$pkgversion$RESET 
+echo '    has been published [or failed to] to npmjs. '
+echo -e '    TODO: ON CLIENT, RUN' $REDBOLD 'npm i' $pkgname $RESET 'to eat new version.'
+
+
+# echo \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\
+# \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?
+# echo \?\?\?\? DID YOU UPDATE THE VERSION NUMBER IN PACKAGE.JSON \?\?\?\?
+# echo \?\?\?\?' IN FILE copyToNpmdist/package.json    '\?\?\?\?
+# echo \?\?\?\?' and run builddist                                 '\?\?\?\?
+# echo \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\
+# \?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?

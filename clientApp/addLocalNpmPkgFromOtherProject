@@ -1,0 +1,20 @@
+#!/bin/bash
+# written/tested on windows using git-bash shell
+
+
+## **** install npm from local folder ****
+## see also "npm install mypackage@latest" because sometimes wont do latest
+npmdistFolder='../libraryApp/npmdist'; 
+cp package.json package.json.beforeLocalInst
+echo now installing from dist folder. package.json will get modified by this.
+echo 'dist folder is ' $npmdistFolder
+set -x
+npm i $npmdistFolder
+set +x
+echo '###########################################################'
+echo '### WARNING: IF NODE_MODULES EXIST IN ANY ANCESTOR OF   ###'
+echo '### NPMDIST FOLDER, RUNNING "NPM START" WILL MAKE ERROR ###'
+echo '### MESSAGE ON CONSOLE ABOUT DUPLICATE REACT INSTALLS!  ###'
+echo '###########################################################'
+
+

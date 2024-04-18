@@ -1,0 +1,21 @@
+{
+    "name": "jjjunk-test",
+    "version": "4.2.168",
+    "description": "Please do not import. For testing only",
+    "main": "bundle.js",
+    "bin": "sayHello.js",
+    "scripts": {
+        "// sayHello.js gets run for   npx <thispackageName>  ": "bb",
+        "// be sure to include qrcode in peerDependencies": "aa",
+        "start": "this is the start script in package.json",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "another": "echo \"npm install mypackage@latest\" if sticks on old version"
+    },
+    "author": "",
+    "license": "MIT",
+    "peerDependencies": {
+        "qrcode": "^1.5.3",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    }
+}

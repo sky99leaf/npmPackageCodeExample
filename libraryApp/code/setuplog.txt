@@ -1,0 +1,27 @@
+this is old does not include webpack stuff
+
+created new package.json using "npx create-react-app my-app"
+   in junk folder and copied here
+Then added:
+npm install jsonpath
+npm install yargs
+npm install fs
+npm i css-loader
+.. and more
+
+looked in node_modules and babel and webpack are already there 
+I assume they put there by create-react-app
+
+added webpack.config.js
+from https://webpack.js.org/
+// https://medium.com/@ns-tech-learn/how-to-install-webpack-and-configure-in-react-js-88b4b0bd0af9
+npm install webpack webpack-cli webpack-dev-server
+
+./node_modules/.bin/webpack -mode development
+
+get error: "Support for the experimental syntax 'jsx' isn't currently enabled"
+get this when .babelrc is not there.
+
+
+
+
