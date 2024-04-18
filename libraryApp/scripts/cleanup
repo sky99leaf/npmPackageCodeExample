@@ -1,8 +1,0 @@
-
-rm -rf node_modules
-rm -rf npmdist
-echo folder after cleanup:
-echo
-ls
-echo
-echo now cleaned up for commit
